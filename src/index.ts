@@ -2,6 +2,7 @@ import { DurableObject } from 'cloudflare:workers';
 import { z } from 'zod';
 export interface Env {
 	WEBSOCKET_SERVER: DurableObjectNamespace<WebSocketServer>;
+	ASSETS: any;
 }
 
 // Worker
@@ -14,7 +15,7 @@ export default {
 			const parsed = firehoseSchema.parse(body);
 			const address = formatAddress(parsed.data.propertyAddress);
 			const coords = await addressToCoords(address);
-			stub.broadcast({ address, coords });
+			stub.broadcast({ coords });
 			return new Response(null, { status: 204 });
 		}
 
@@ -39,17 +40,10 @@ export default {
 
 // Durable Object
 export class WebSocketServer extends DurableObject {
-	currentlyConnectedWebSockets: number;
 	sessions: Set<WebSocket>;
 	state: DurableObjectState;
 	constructor(ctx: DurableObjectState, env: Env) {
-		// This is reset whenever the constructor runs because
-		// regular WebSockets do not survive Durable Object resets.
-		//
-		// WebSockets accepted via the Hibernation API can survive
-		// a certain type of eviction, but we will not cover that here.
 		super(ctx, env);
-		this.currentlyConnectedWebSockets = 0;
 		this.sessions = new Set();
 		this.state = ctx;
 		this.state.getWebSockets().forEach((webSocket) => {
@@ -69,20 +63,9 @@ export class WebSocketServer extends DurableObject {
 		// request within the Durable Object. It has the effect of "accepting" the connection,
 		// and allowing the WebSocket to send and receive messages.
 		server.accept();
-		this.currentlyConnectedWebSockets += 1;
-
-		// Send welcome message to the newly connected client
-		server.send(`Welcome! You are client #${this.currentlyConnectedWebSockets}`);
-
-		// Upon receiving a message from the client, the server replies with the same message,
-		// and the total number of connections with the "[Durable Object]: " prefix
-		server.addEventListener('message', (event: MessageEvent) => {
-			server.send(`[Durable Object] currentlyConnectedWebSockets: ${this.currentlyConnectedWebSockets}`);
-		});
 		this.sessions.add(server);
 		// If the client closes the connection, the runtime will close the connection too.
 		server.addEventListener('close', (cls: CloseEvent) => {
-			this.currentlyConnectedWebSockets -= 1;
 			server.close(cls.code, 'Durable Object is closing WebSocket');
 			this.sessions.delete(server);
 		});

@@ -51,13 +51,14 @@
     });
 
     const websocket = new WebSocket('ws://localhost:8787/websocket');
-    websocket.addEventListener('open', () => websocket.send('{}'));
+    // websocket.addEventListener('open', () => websocket.send('{}'));
     websocket.addEventListener('message', (event) => {
       console.log('received an event!', event)
+      const { coords: { lon, lat } } = JSON.parse(event.data)
 
       const aaronsPlace = new Feature({
         type: 'geoMarker',
-        geometry: new Point(fromLonLat([-111.92293277249284, 33.433928699999996])),
+        geometry: new Point(fromLonLat([lon, lat])),
       })
       source.addFeature(aaronsPlace);
     });
