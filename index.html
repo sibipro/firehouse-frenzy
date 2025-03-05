@@ -31,16 +31,10 @@
     import Point from 'ol/geom/point';
     import { fromLonLat } from 'ol/proj';
 
-    const nullIsland = new Feature({
+    const aaronsPlace = new Feature({
       type: 'geoMarker',
       geometry: new Point(fromLonLat([-111.92293277249284, 33.433928699999996])),
     })
-    const nullishIsland = new Feature({
-      labelPoint: new Point(fromLonLat([-77.036667, 38.895])),
-      geometry: new Point(fromLonLat([-77.036667, 38.895])),
-      name: 'Foo'
-    });
-    nullishIsland.setGeometryName('labelPoint');
 
     const map = new Map({
       target: 'map',
@@ -50,10 +44,7 @@
         }),
         new VectorLayer({
           source: new VectorSource({
-            features: [
-              nullIsland,
-              nullishIsland,
-            ],
+            features: [aaronsPlace,],
           })
         }),
       ],

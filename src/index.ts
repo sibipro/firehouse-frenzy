@@ -37,6 +37,16 @@ export class MyDurableObject extends DurableObject<Env> {
 		return `Hello, ${name}!`;
 	}
 }
+const addressToCoords = async (address: string) => {
+	const coord = await fetch(`https://nominatim.openstreetmap.org/search.php?q=${address}&format=jsonv2`, {
+		headers: {
+			'User-Agent': 'sibi-firehouse-frenzy',
+		},
+	});
+	const coordJson = (await coord.json()) as string;
+	console.log(coordJson);
+	return coordJson;
+};
 
 export default {
 	/**
