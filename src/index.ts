@@ -1,5 +1,5 @@
 import { DurableObject } from 'cloudflare:workers';
-
+import { z } from 'zod';
 export interface Env {
 	WEBSOCKET_SERVER: DurableObjectNamespace<WebSocketServer>;
 }
@@ -10,7 +10,11 @@ export default {
 		if (request.method === 'POST') {
 			const id = env.WEBSOCKET_SERVER.idFromName('foo');
 			const stub = env.WEBSOCKET_SERVER.get(id);
-			stub.broadcast('I got a POST');
+			const body = await request.json();
+			const parsed = firehoseSchema.parse(body);
+			const address = formatAddress(parsed.data.propertyAddress);
+			const coords = await addressToCoords(address);
+			stub.broadcast({ address, coords });
 			return new Response(null, { status: 204 });
 		}
 
@@ -38,7 +42,7 @@ export default {
 			},
 		});
 	},
-} satisfies ExportedHandler<Env>;
+};
 
 // Durable Object
 export class WebSocketServer extends DurableObject {
@@ -103,23 +107,11 @@ export class WebSocketServer extends DurableObject {
 			message = JSON.stringify(message);
 		}
 
-		// Iterate over all the sessions sending them messages.
-		let quitters: any = [];
 		this.sessions.forEach((session, webSocket) => {
 			try {
 				webSocket.send(message);
 			} catch (err) {
-				// Whoops, this connection is dead. Remove it from the map and arrange to notify
-				// everyone below.
-				session.quit = true;
-				quitters.push(session);
 				this.sessions.delete(webSocket);
-			}
-		});
-
-		quitters.forEach((quitter) => {
-			if (quitter.name) {
-				this.broadcast({ quit: quitter.name });
 			}
 		});
 
@@ -136,4 +128,22 @@ const addressToCoords = async (address: string) => {
 	const coordJson = (await coord.json()) as string;
 	console.log(coordJson);
 	return coordJson;
+};
+
+const firehoseSchema = z.object({
+	data: z.object({
+		propertyAddress: z.object({
+			line1: z.string(),
+			line2: z.string().optional(),
+			city: z.string(),
+			stateOrProvince: z.string(),
+			postalCode: z.string(),
+		}),
+	}),
+});
+
+type FirehoseMessage = z.infer<typeof firehoseSchema>;
+
+const formatAddress = (address: FirehoseMessage['data']['propertyAddress']): string => {
+	return [address.line1, address.line2, address.city, address.stateOrProvince, address.postalCode].filter(Boolean).join(' ');
 };

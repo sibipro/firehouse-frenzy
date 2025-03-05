@@ -10,9 +10,21 @@
   "migrations": [
     {
       "new_classes": [
-        "WebSocketServer"
+        "MyDurableObject"
       ],
       "tag": "v1"
+    },
+    {
+      "new_classes": [
+        "WebSocketServer"
+      ],
+      "tag": "v2"
+    },
+    {
+      "tag": "v3",
+      "deleted_classes": [
+        "MyDurableObject"
+      ]
     }
   ],
   "durable_objects": {
