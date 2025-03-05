@@ -10,7 +10,7 @@
   "migrations": [
     {
       "new_classes": [
-        "MyDurableObject"
+        "WebSocketServer"
       ],
       "tag": "v1"
     }
@@ -18,8 +18,8 @@
   "durable_objects": {
     "bindings": [
       {
-        "class_name": "MyDurableObject",
-        "name": "MY_DURABLE_OBJECT"
+        "class_name": "WebSocketServer",
+        "name": "WEBSOCKET_SERVER"
       }
     ]
   },
@@ -37,13 +37,6 @@
    * databases, object storage, AI inference, real-time communication and more.
    * https://developers.cloudflare.com/workers/runtime-apis/bindings/
    */
-  "queues": {
-    "consumers": [
-      {
-        "queue": "firehouse-frenzy"
-      }
-    ]
-  }
   /**
    * Environment Variables
    * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables

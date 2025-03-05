@@ -54,6 +54,13 @@
       }),
     });
 
+    const websocket = new WebSocket('ws://localhost:8787/websocket');
+    websocket.addEventListener('open', event => {
+      console.log('connected to websocket', event)
+      websocket.send('hi')
+    })
+    websocket.addEventListener('message', (event) => console.log('received an event!', event));
+
   </script>
   <style>
     @import "https://esm.sh/ol@10.4.0/ol.css";
