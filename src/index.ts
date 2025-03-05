@@ -2,6 +2,7 @@ import { DurableObject } from 'cloudflare:workers';
 import { z } from 'zod';
 export interface Env {
 	WEBSOCKET_SERVER: DurableObjectNamespace<WebSocketServer>;
+	FIREHOUSE_FRENZY: KVNamespace;
 	ASSETS: any;
 }
 
@@ -14,7 +15,7 @@ export default {
 			const body = await request.json();
 			const parsed = firehoseSchema.parse(body);
 			const address = formatAddress(parsed.data.propertyAddress);
-			const coords = await addressToCoords(address);
+			const coords = await addressToCoords(address, env);
 			stub.broadcast({ coords });
 			return new Response(null, { status: 204 });
 		}
@@ -95,17 +96,24 @@ export class WebSocketServer extends DurableObject {
 	}
 }
 
-const addressToCoords = async (address: string) => {
+const addressToCoords = async (address: string, env: Env) => {
+	// see if the address is already in the kv
+	const coordFromKv = await env.FIREHOUSE_FRENZY.get(address);
+	if (coordFromKv) {
+		return JSON.parse(coordFromKv);
+	}
 	const coord = await fetch(`https://nominatim.openstreetmap.org/search.php?q=${address}&format=jsonv2`, {
 		headers: {
 			'User-Agent': 'sibi-firehouse-frenzy',
 		},
 	});
 	const parsed = nominatimSchema.parse(await coord.json());
-	return {
+	const coords = {
 		lat: parsed[0].lat,
 		lon: parsed[0].lon,
 	};
+	await env.FIREHOUSE_FRENZY.put(address, JSON.stringify(coords));
+	return coords;
 };
 
 const nominatimSchema = z.array(

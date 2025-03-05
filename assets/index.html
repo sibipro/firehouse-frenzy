@@ -50,7 +50,7 @@
       }),
     });
 
-    const websocket = new WebSocket('ws://localhost:8787/websocket');
+    const websocket = new WebSocket('/websocket');
     // websocket.addEventListener('open', () => websocket.send('{}'));
     websocket.addEventListener('message', (event) => {
       console.log('received an event!', event)

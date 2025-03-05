@@ -39,6 +39,12 @@
       }
     ]
   },
+  "kv_namespaces": [
+    {
+      "binding": "FIREHOUSE_FRENZY",
+      "id": "7fae9f6ef30f4df594f8f936a60a86e6"
+    }
+  ],
   "observability": {
     "enabled": true
   },
