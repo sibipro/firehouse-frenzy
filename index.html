@@ -36,10 +36,12 @@
       geometry: new Point([0, 0]),
     })
     const nullishIsland = new Feature({
-      type: 'geoMarker',
       // geometry: new Point([-111.92293277249284, 33.433928699999996]),
+      labelPoint: new Point([-77.036667, 38.895]),
       geometry: new Point([-77.036667, 38.895]),
-    })
+      name: 'Foo'
+    });
+    nullishIsland.setGeometryName('labelPoint');
 
     const map = new Map({
       target: 'map',

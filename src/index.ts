@@ -50,13 +50,18 @@ export default {
 	async fetch(request, env, ctx): Promise<Response> {
 		// We will create a `DurableObjectId` using the pathname from the Worker request
 		// This id refers to a unique instance of our 'MyDurableObject' class above
-		let id: DurableObjectId = env.FIREHOSE.idFromName(new URL(request.url).pathname);
-		const coord = await fetch('https://nominatim.openstreetmap.org/search.php?q=1001%20E.%20Playa%20del%20Norte%20Dr&format=jsonv2');
-		const coordJson = (await coord.json()) as { lat: string; lon: string }[];
+		let id: DurableObjectId = env.MY_DURABLE_OBJECT.idFromName(new URL(request.url).pathname);
+		const coord = await fetch('https://nominatim.openstreetmap.org/search.php?q=1001%20E.%20Playa%20del%20Norte%20Dr&format=jsonv2', {
+			headers: {
+				'User-Agent': 'sibi-firehouse-frenzy',
+			},
+		});
+		const coordJson = (await coord.text()) as string;
+		console.log(coordJson);
 
 		// This stub creates a communication channel with the Durable Object instance
 		// The Durable Object constructor will be invoked upon the first call for a given id
-		let stub = env.FIREHOSE.get(id);
+		let stub = env.MY_DURABLE_OBJECT.get(id);
 
 		// We call the `sayHello()` RPC method on the stub to invoke the method on the remote
 		// Durable Object instance
