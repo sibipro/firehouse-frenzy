@@ -125,10 +125,19 @@ const addressToCoords = async (address: string) => {
 			'User-Agent': 'sibi-firehouse-frenzy',
 		},
 	});
-	const coordJson = (await coord.json()) as string;
-	console.log(coordJson);
-	return coordJson;
+	const parsed = nominatimSchema.parse(await coord.json());
+	return {
+		lat: parsed[0].lat,
+		lon: parsed[0].lon,
+	};
 };
+
+const nominatimSchema = z.array(
+	z.object({
+		lat: z.string(),
+		lon: z.string(),
+	})
+);
 
 const firehoseSchema = z.object({
 	data: z.object({
