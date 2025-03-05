@@ -7,6 +7,10 @@
   "name": "firehouse-frenzy",
   "main": "src/index.ts",
   "compatibility_date": "2025-03-03",
+  "assets": {
+    "directory": "./assets",
+    "binding": "ASSETS"
+  },
   "migrations": [
     {
       "new_classes": [

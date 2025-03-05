@@ -6,7 +6,7 @@ export interface Env {
 
 // Worker
 export default {
-	async fetch(request, env, ctx): Promise<Response> {
+	async fetch(request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		if (request.method === 'POST') {
 			const id = env.WEBSOCKET_SERVER.idFromName('foo');
 			const stub = env.WEBSOCKET_SERVER.get(id);
@@ -33,14 +33,7 @@ export default {
 
 			return stub.fetch(request);
 		}
-
-		return new Response(null, {
-			status: 400,
-			statusText: 'Bad Request',
-			headers: {
-				'Content-Type': 'text/plain',
-			},
-		});
+		return env.ASSETS.fetch(request);
 	},
 };
 
