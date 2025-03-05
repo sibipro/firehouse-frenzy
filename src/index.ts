@@ -1,4 +1,4 @@
-import { DurableObject } from "cloudflare:workers";
+import { DurableObject } from 'cloudflare:workers';
 
 /**
  * Welcome to Cloudflare Workers! This is your first Durable Objects application.
@@ -50,16 +50,18 @@ export default {
 	async fetch(request, env, ctx): Promise<Response> {
 		// We will create a `DurableObjectId` using the pathname from the Worker request
 		// This id refers to a unique instance of our 'MyDurableObject' class above
-		let id: DurableObjectId = env.MY_DURABLE_OBJECT.idFromName(new URL(request.url).pathname);
+		let id: DurableObjectId = env.FIREHOSE.idFromName(new URL(request.url).pathname);
+		const coord = await fetch('https://nominatim.openstreetmap.org/search.php?q=1001%20E.%20Playa%20del%20Norte%20Dr&format=jsonv2');
+		const coordJson = (await coord.json()) as { lat: string; lon: string }[];
 
 		// This stub creates a communication channel with the Durable Object instance
 		// The Durable Object constructor will be invoked upon the first call for a given id
-		let stub = env.MY_DURABLE_OBJECT.get(id);
+		let stub = env.FIREHOSE.get(id);
 
 		// We call the `sayHello()` RPC method on the stub to invoke the method on the remote
 		// Durable Object instance
-		let greeting = await stub.sayHello("world");
+		let greeting = await stub.sayHello('world');
 
-		return new Response(greeting);
+		return new Response(JSON.stringify(coordJson));
 	},
 } satisfies ExportedHandler<Env>;

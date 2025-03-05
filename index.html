@@ -1,0 +1,87 @@
+<html>
+
+<head>
+  <title>Firehouse Frenzy</title>
+  <script type="importmap">
+    {
+      "imports": {
+        "ol": "https://esm.sh/ol@10.4.0",
+        "ol/coordinate": "https://esm.sh/ol@10.4.0/coordinate?external=/ol",
+        "ol/layer/tile": "https://esm.sh/ol@10.4.0/layer/Tile?external=/ol",
+        "ol/layer/vector": "https://esm.sh/ol@10.4.0/layer/Vector?external=/ol",
+        "ol/feature": "https://esm.sh/ol@10.4.0/Feature?external=/ol",
+        "ol/map": "https://esm.sh/ol@10.4.0/Map?external=/ol",
+        "ol/geom/point": "https://esm.sh/ol@10.4.0/geom/Point?external=/ol",
+        "ol/source/OSM": "https://esm.sh/ol@10.4.0/source/OSM?external=/ol",
+        "ol/source/vector": "https://esm.sh/ol@10.4.0/source/Vector?external=/ol",
+        "ol/style/circle": "https://esm.sh/ol@10.4.0/style/Circle?external=/ol",
+        "ol/view": "https://esm.sh/ol@10.4.0/View?external=/ol"
+      }
+    }
+  </script>
+  <script type="module">
+    import Map from "ol/map";
+    import TileLayer from "ol/layer/tile";
+    import VectorLayer from "ol/layer/vector";
+    import VectorSource from "ol/source/vector";
+    import OSM from "ol/source/OSM";
+    import View from 'ol/view';
+    import Feature from 'ol/feature';
+    import Point from 'ol/geom/point';
+    import { toStringXY } from 'ol/coordinate';
+
+    const nullIsland = new Feature({
+      type: 'geoMarker',
+      // geometry: new Point([-111.92293277249284, 33.433928699999996]),
+      geometry: new Point([0, 0]),
+    })
+    const nullishIsland = new Feature({
+      type: 'geoMarker',
+      // geometry: new Point([-111.92293277249284, 33.433928699999996]),
+      geometry: new Point([-77.036667, 38.895]),
+    })
+
+    const map = new Map({
+      target: 'map',
+      layers: [
+        new TileLayer({
+          source: new OSM(),
+        }),
+        new VectorLayer({
+          source: new VectorSource({
+            features: [nullIsland, nullishIsland],
+          })
+        }),
+      ],
+      view: new View({
+        center: [0, 0],
+        zoom: 2,
+      }),
+    });
+
+  </script>
+  <style>
+    @import "https://esm.sh/ol@10.4.0/ol.css";
+
+    html,
+    body,
+    #map {
+      width: 100vw;
+      height: 100vh;
+      padding: 0;
+      margin: 0;
+    }
+
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+</body>
+
+</html>
