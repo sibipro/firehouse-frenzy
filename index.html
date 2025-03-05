@@ -12,6 +12,7 @@
         "ol/feature": "https://esm.sh/ol@10.4.0/Feature?external=/ol",
         "ol/map": "https://esm.sh/ol@10.4.0/Map?external=/ol",
         "ol/geom/point": "https://esm.sh/ol@10.4.0/geom/Point?external=/ol",
+        "ol/proj": "https://esm.sh/ol@10.4.0/proj?external=/ol",
         "ol/source/OSM": "https://esm.sh/ol@10.4.0/source/OSM?external=/ol",
         "ol/source/vector": "https://esm.sh/ol@10.4.0/source/Vector?external=/ol",
         "ol/style/circle": "https://esm.sh/ol@10.4.0/style/Circle?external=/ol",
@@ -28,17 +29,15 @@
     import View from 'ol/view';
     import Feature from 'ol/feature';
     import Point from 'ol/geom/point';
-    import { toStringXY } from 'ol/coordinate';
+    import { fromLonLat } from 'ol/proj';
 
     const nullIsland = new Feature({
       type: 'geoMarker',
-      // geometry: new Point([-111.92293277249284, 33.433928699999996]),
-      geometry: new Point([0, 0]),
+      geometry: new Point(fromLonLat([-111.92293277249284, 33.433928699999996])),
     })
     const nullishIsland = new Feature({
-      // geometry: new Point([-111.92293277249284, 33.433928699999996]),
-      labelPoint: new Point([-77.036667, 38.895]),
-      geometry: new Point([-77.036667, 38.895]),
+      labelPoint: new Point(fromLonLat([-77.036667, 38.895])),
+      geometry: new Point(fromLonLat([-77.036667, 38.895])),
       name: 'Foo'
     });
     nullishIsland.setGeometryName('labelPoint');
@@ -51,7 +50,10 @@
         }),
         new VectorLayer({
           source: new VectorSource({
-            features: [nullIsland, nullishIsland],
+            features: [
+              nullIsland,
+              nullishIsland,
+            ],
           })
         }),
       ],
