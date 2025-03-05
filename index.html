@@ -31,10 +31,8 @@
     import Point from 'ol/geom/point';
     import { fromLonLat } from 'ol/proj';
 
-    const aaronsPlace = new Feature({
-      type: 'geoMarker',
-      geometry: new Point(fromLonLat([-111.92293277249284, 33.433928699999996])),
-    })
+
+    const source = new VectorSource()
 
     const map = new Map({
       target: 'map',
@@ -43,9 +41,7 @@
           source: new OSM(),
         }),
         new VectorLayer({
-          source: new VectorSource({
-            features: [aaronsPlace,],
-          })
+          source,
         }),
       ],
       view: new View({
@@ -55,11 +51,16 @@
     });
 
     const websocket = new WebSocket('ws://localhost:8787/websocket');
-    websocket.addEventListener('open', event => {
-      console.log('connected to websocket', event)
-      websocket.send('hi')
-    })
-    websocket.addEventListener('message', (event) => console.log('received an event!', event));
+    websocket.addEventListener('open', () => websocket.send('{}'));
+    websocket.addEventListener('message', (event) => {
+      console.log('received an event!', event)
+
+      const aaronsPlace = new Feature({
+        type: 'geoMarker',
+        geometry: new Point(fromLonLat([-111.92293277249284, 33.433928699999996])),
+      })
+      source.addFeature(aaronsPlace);
+    });
 
   </script>
   <style>
