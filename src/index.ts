@@ -63,7 +63,7 @@ export class WebSocketServer extends DurableObject {
 			return this.broadcast({
 				data: message,
 				metadata: {
-					topic: request.headers.get('topic') ?? 'unknown-topic',
+					...Object.fromEntries(request.headers.entries()),
 				},
 			});
 		}
