@@ -9,44 +9,38 @@
   "compatibility_date": "2025-03-03",
   "assets": {
     "directory": "./assets",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
   },
   "migrations": [
     {
-      "new_classes": [
-        "MyDurableObject"
-      ],
-      "tag": "v1"
+      "new_classes": ["MyDurableObject"],
+      "tag": "v1",
     },
     {
-      "new_classes": [
-        "WebSocketServer"
-      ],
-      "tag": "v2"
+      "new_classes": ["WebSocketServer"],
+      "tag": "v2",
     },
     {
       "tag": "v3",
-      "deleted_classes": [
-        "MyDurableObject"
-      ]
-    }
+      "deleted_classes": ["MyDurableObject"],
+    },
   ],
   "durable_objects": {
     "bindings": [
       {
         "class_name": "WebSocketServer",
-        "name": "WEBSOCKET_SERVER"
-      }
-    ]
+        "name": "WEBSOCKET_SERVER",
+      },
+    ],
   },
   "kv_namespaces": [
     {
       "binding": "FIREHOUSE_FRENZY",
-      "id": "7fae9f6ef30f4df594f8f936a60a86e6"
-    }
+      "id": "7fae9f6ef30f4df594f8f936a60a86e6",
+    },
   ],
   "observability": {
-    "enabled": true
+    "enabled": true,
   },
   /**
    * Smart Placement

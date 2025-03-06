@@ -3,35 +3,35 @@
 <head>
   <title>Firehouse Frenzy</title>
   <script type="importmap">
-    {
-      "imports": {
-        "ol": "https://esm.sh/ol@10.4.0",
-        "ol/coordinate": "https://esm.sh/ol@10.4.0/coordinate?external=/ol",
-        "ol/layer/tile": "https://esm.sh/ol@10.4.0/layer/Tile?external=/ol",
-        "ol/layer/vector": "https://esm.sh/ol@10.4.0/layer/Vector?external=/ol",
-        "ol/feature": "https://esm.sh/ol@10.4.0/Feature?external=/ol",
-        "ol/map": "https://esm.sh/ol@10.4.0/Map?external=/ol",
-        "ol/geom/point": "https://esm.sh/ol@10.4.0/geom/Point?external=/ol",
-        "ol/proj": "https://esm.sh/ol@10.4.0/proj?external=/ol",
-        "ol/source/OSM": "https://esm.sh/ol@10.4.0/source/OSM?external=/ol",
-        "ol/source/vector": "https://esm.sh/ol@10.4.0/source/Vector?external=/ol",
-        "ol/style/circle": "https://esm.sh/ol@10.4.0/style/Circle?external=/ol",
-        "ol/view": "https://esm.sh/ol@10.4.0/View?external=/ol",
-        "ol/easing": "https://esm.sh/ol@10.4.0/easing?external=/ol"
+      {
+        "imports": {
+          "ol": "https://esm.sh/ol@10.4.0",
+          "ol/coordinate": "https://esm.sh/ol@10.4.0/coordinate?external=/ol",
+          "ol/layer/tile": "https://esm.sh/ol@10.4.0/layer/Tile?external=/ol",
+          "ol/layer/vector": "https://esm.sh/ol@10.4.0/layer/Vector?external=/ol",
+          "ol/feature": "https://esm.sh/ol@10.4.0/Feature?external=/ol",
+          "ol/map": "https://esm.sh/ol@10.4.0/Map?external=/ol",
+          "ol/geom/point": "https://esm.sh/ol@10.4.0/geom/Point?external=/ol",
+          "ol/proj": "https://esm.sh/ol@10.4.0/proj?external=/ol",
+          "ol/source/OSM": "https://esm.sh/ol@10.4.0/source/OSM?external=/ol",
+          "ol/source/vector": "https://esm.sh/ol@10.4.0/source/Vector?external=/ol",
+          "ol/style/circle": "https://esm.sh/ol@10.4.0/style/Circle?external=/ol",
+          "ol/view": "https://esm.sh/ol@10.4.0/View?external=/ol",
+          "ol/easing": "https://esm.sh/ol@10.4.0/easing?external=/ol"
+        }
       }
-    }
-  </script>
+    </script>
   <script type="module">
-    import Map from "ol/map";
-    import TileLayer from "ol/layer/tile";
-    import VectorLayer from "ol/layer/vector";
-    import VectorSource from "ol/source/vector";
-    import OSM from "ol/source/OSM";
-    import View from 'ol/view';
-    import Feature from 'ol/feature';
-    import Point from 'ol/geom/point';
-    import { fromLonLat } from 'ol/proj';
-    import * as easing from 'ol/easing';
+    import Map from 'ol/map'
+    import TileLayer from 'ol/layer/tile'
+    import VectorLayer from 'ol/layer/vector'
+    import VectorSource from 'ol/source/vector'
+    import OSM from 'ol/source/OSM'
+    import View from 'ol/view'
+    import Feature from 'ol/feature'
+    import Point from 'ol/geom/point'
+    import { fromLonLat } from 'ol/proj'
+    import * as easing from 'ol/easing'
 
     const source = new VectorSource()
     const view = new View({
@@ -50,29 +50,32 @@
         }),
       ],
       view,
-    });
+    })
 
-    const websocket = new WebSocket('/websocket');
-    const random = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const websocket = new WebSocket('/websocket')
+    const random = (arr) => arr[Math.floor(Math.random() * arr.length)]
     websocket.addEventListener('message', (event) => {
       const { metadata, data } = JSON.parse(event.data)
-      const { coords: { lon, lat } } = data
-      console.log({ metadata, data })
+      const {
+        coords: { lon, lat },
+      } = data
       // animate the center to the new location
       view.animate({
         center: fromLonLat([lon, lat]),
-        duration: 500,
-        easing: random(easing)
-      });
-      source.addFeature(new Feature({
-        type: 'geoMarker',
-        geometry: new Point(fromLonLat([lon, lat])),
-      }));
-    });
-
+        duration: 5000,
+        easing: random(easing),
+        zoom: 12,
+      })
+      source.addFeature(
+        new Feature({
+          type: 'geoMarker',
+          geometry: new Point(fromLonLat([lon, lat])),
+        }),
+      )
+    })
   </script>
   <style>
-    @import "https://esm.sh/ol@10.4.0/ol.css";
+    @import 'https://esm.sh/ol@10.4.0/ol.css';
 
     html,
     body,
