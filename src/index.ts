@@ -20,7 +20,7 @@ export default {
 			await stub.fetch('https://internal/broadcast', {
 				method: 'POST',
 				body: JSON.stringify({ coords }),
-				headers: request.headers,
+				headers: Object.fromEntries(request.headers.entries()),
 			});
 
 			return new Response(null, { status: 204 });
