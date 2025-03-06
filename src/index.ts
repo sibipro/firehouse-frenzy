@@ -20,6 +20,7 @@ export default {
 			await stub.fetch('https://internal/broadcast', {
 				method: 'POST',
 				body: JSON.stringify({ coords }),
+				headers: request.headers,
 			});
 
 			return new Response(null, { status: 204 });
@@ -57,7 +58,14 @@ export class WebSocketServer extends DurableObject {
 		const url = new URL(request.url);
 		if (url.pathname === '/broadcast') {
 			const message = await request.json();
-			return this.broadcast(message);
+			// log headers
+			console.log(request.headers);
+			return this.broadcast({
+				data: message,
+				metadata: {
+					topic: request.headers.get('topic') ?? 'unknown-topic',
+				},
+			});
 		}
 
 		// WebSocket connection handling
@@ -79,13 +87,9 @@ export class WebSocketServer extends DurableObject {
 	}
 
 	broadcast(message) {
-		if (typeof message !== 'string') {
-			message = JSON.stringify(message);
-		}
-
-		this.sessions.forEach((webSocket) => {
+		message = this.sessions.forEach((webSocket) => {
 			try {
-				webSocket.send(message);
+				webSocket.send(JSON.stringify(message));
 			} catch (err) {
 				this.sessions.delete(webSocket);
 			}

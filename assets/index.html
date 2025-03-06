@@ -56,7 +56,9 @@
     const websocket = new WebSocket('/websocket');
     const random = (arr) => arr[Math.floor(Math.random() * arr.length)];
     websocket.addEventListener('message', (event) => {
-      const { coords: { lon, lat } } = JSON.parse(event.data)
+      const { metadata, data } = JSON.parse(event.data)
+      const { coords: { lon, lat } } = data
+      console.log({ metadata, data })
       // animate the center to the new location
       view.animate({
         center: fromLonLat([lon, lat]),
