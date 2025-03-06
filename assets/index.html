@@ -31,8 +31,12 @@
     import Point from 'ol/geom/point';
     import { fromLonLat } from 'ol/proj';
 
-
+    console.log('yo yo yo')
     const source = new VectorSource()
+    const view = new View({
+      center: fromLonLat([-96, 38.7946]),
+      zoom: 5.5,
+    })
 
     const map = new Map({
       target: 'map',
@@ -44,23 +48,21 @@
           source,
         }),
       ],
-      view: new View({
-        center: fromLonLat([-96, 38.7946]),
-        zoom: 5.5,
-      }),
+      view,
     });
 
     const websocket = new WebSocket('/websocket');
-    // websocket.addEventListener('open', () => websocket.send('{}'));
     websocket.addEventListener('message', (event) => {
-      console.log('received an event!', event)
       const { coords: { lon, lat } } = JSON.parse(event.data)
-
-      const aaronsPlace = new Feature({
+      // animate the center to the new location
+      view.animate({
+        center: fromLonLat([lon, lat]),
+        duration: 500,
+      });
+      source.addFeature(new Feature({
         type: 'geoMarker',
         geometry: new Point(fromLonLat([lon, lat])),
-      })
-      source.addFeature(aaronsPlace);
+      }));
     });
 
   </script>
