@@ -20,7 +20,7 @@
     import Point from 'ol/geom/Point'
     import { fromLonLat } from 'ol/proj'
     import * as easing from 'ol/easing'
-
+    import { Style, Fill, Stroke, Text, Circle } from 'ol/style'
     const source = new VectorSource()
     const view = new View({
       center: fromLonLat([-96, 38.7946]),
@@ -40,6 +40,7 @@
       view,
     })
 
+
     const websocket = new WebSocket('/websocket')
     const random = (arr) => arr[Math.floor(Math.random() * arr.length)]
     websocket.addEventListener('message', (event) => {
@@ -50,16 +51,36 @@
       // animate the center to the new location
       view.animate({
         center: fromLonLat([lon, lat]),
-        duration: 5000,
+        duration: 1000,
         easing: random(easing),
+        rotation: Math.random() * 360,
         zoom: 12,
       })
-      source.addFeature(
-        new Feature({
-          type: 'geoMarker',
-          geometry: new Point(fromLonLat([lon, lat])),
+
+      const feature = new Feature({
+        type: 'geoMarker',
+        geometry: new Point(fromLonLat([lon, lat])),
+      })
+
+      feature.setStyle(new Style({
+        image: new Circle({
+          radius: 7,
+          fill: new Fill({
+            color: 'purple',
+          }),
+          stroke: new Stroke({
+            color: 'white',
+            width: 2,
+          }),
+
         }),
-      )
+        text: new Text({
+          text: metadata.topic,
+          font: 'bold 16px Calibri,sans-serif',
+          offsetY: -20,
+        })
+      }))
+      source.addFeature(feature)
     })
   </script>
   <style>
