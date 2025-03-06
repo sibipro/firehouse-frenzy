@@ -16,7 +16,8 @@
         "ol/source/OSM": "https://esm.sh/ol@10.4.0/source/OSM?external=/ol",
         "ol/source/vector": "https://esm.sh/ol@10.4.0/source/Vector?external=/ol",
         "ol/style/circle": "https://esm.sh/ol@10.4.0/style/Circle?external=/ol",
-        "ol/view": "https://esm.sh/ol@10.4.0/View?external=/ol"
+        "ol/view": "https://esm.sh/ol@10.4.0/View?external=/ol",
+        "ol/easing": "https://esm.sh/ol@10.4.0/easing?external=/ol"
       }
     }
   </script>
@@ -30,6 +31,7 @@
     import Feature from 'ol/feature';
     import Point from 'ol/geom/point';
     import { fromLonLat } from 'ol/proj';
+    import * as easing from 'ol/easing';
 
     console.log('yo yo yo')
     const source = new VectorSource()
@@ -52,12 +54,14 @@
     });
 
     const websocket = new WebSocket('/websocket');
+    const random = (arr) => arr[Math.floor(Math.random() * arr.length)];
     websocket.addEventListener('message', (event) => {
       const { coords: { lon, lat } } = JSON.parse(event.data)
       // animate the center to the new location
       view.animate({
         center: fromLonLat([lon, lat]),
         duration: 500,
+        easing: random(easing)
       });
       source.addFeature(new Feature({
         type: 'geoMarker',
