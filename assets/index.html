@@ -48,19 +48,6 @@
       const {
         coords: { lon, lat },
       } = data
-      // animate the center to the new location
-      view.animate({
-        duration: 1000,
-        center: fromLonLat([-96, 38.7946]),
-        zoom: 5.5,
-      },{
-        center: fromLonLat([lon, lat]),
-        duration: 1000,
-        easing: random(easing),
-        rotation: 0,
-        // rotation: Math.random() * 360,
-        zoom: 12,
-      })
 
       const feature = new Feature({
         type: 'geoMarker',
@@ -86,6 +73,19 @@
         })
       }))
       source.addFeature(feature)
+
+      // animate the center to the new location
+      view.animate({
+        duration: 1000,
+        center: fromLonLat([-96, 38.7946]),
+        zoom: 5.5,
+      },{
+        center: fromLonLat([lon, lat]),
+        duration: 1000,
+        easing: random(easing),
+        rotation: 0,
+        zoom: 12,
+      })
     })
   </script>
   <style>
